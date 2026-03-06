@@ -13,7 +13,7 @@ Start a live Claude Code terminal session in a target project folder for remote 
 2. Default to a visible foreground Terminal session in a new Terminal window unless the user explicitly wants a background PTY session.
 3. Start the launcher script in that folder.
 4. Check whether Claude Code shows a remote-control link.
-5. If remote control is not active yet, enable it by sending `/remote-control` in the Claude session.
+5. Prefer native `claude remote-control` for fresh remote sessions on macOS bridge installs instead of relying on post-launch slash-command automation.
 6. Report the mode used, the remote-control link when available, and how to close the session with `/exit`.
 
 ## Launcher
@@ -75,12 +75,13 @@ Use when the user wants the session visible on the Mac in Terminal.
 
 ## Remote Mac / Tailscale handoff
 
-If the user wants Claude launched on another Mac without running OpenClaw there, a practical path is:
+If the user wants Claude launched on another Mac without running OpenClaw there, the preferred path is:
 
 1. Put both Macs on the same Tailscale tailnet.
 2. Enable **Remote Login** (SSH) on the target Mac.
 3. Add the source machine's SSH public key to the target Mac's `~/.ssh/authorized_keys`.
-4. SSH into the target Mac and launch Claude from there.
+4. Install the lightweight ClawdRemote macOS bridge on the target Mac.
+5. Send a launch request to the bridge, then read back `~/.clawdremote/last-result.json` for the remote-control link.
 
 ### Important PATH lesson
 
@@ -97,6 +98,32 @@ When launching Claude remotely over SSH, prefer a login shell form such as:
 ```bash
 ssh user@target-mac 'zsh -lic "cd /path/to/project && claude --dangerously-skip-permissions --model opus"'
 ```
+
+### Preferred bridge flow
+
+Install on the target Mac:
+
+```bash
+./install-macos-bridge.sh
+```
+
+Trigger a launch request:
+
+```bash
+./request-remote-launch.sh /path/to/project
+```
+
+Read the result:
+
+```bash
+cat ~/.clawdremote/last-result.json
+```
+
+The bridge should:
+- open a new visible Terminal window
+- launch native `claude remote-control` in the requested project
+- capture the resulting link when available
+- record status/result without storing secrets in the repo
 
 ### Tailscale checklist
 

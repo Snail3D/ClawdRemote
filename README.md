@@ -18,6 +18,9 @@ ClawdRemote is a tiny launcher + skill that:
 
 - `SKILL.md` — OpenClaw skill definition
 - `start-claude-session.sh` — launcher script
+- `install-macos-bridge.sh` — installs a lightweight per-user macOS LaunchAgent bridge
+- `macos-bridge.sh` — local bridge worker that opens Terminal, launches native Claude Remote Control, and records the result
+- `request-remote-launch.sh` — writes a launch request for the installed bridge
 
 ## Usage
 
@@ -82,10 +85,26 @@ Important: if `claude` is not found over SSH, use a login shell:
 ssh user@target-mac 'zsh -lic "command -v claude && claude --version"'
 ```
 
-Example remote launch:
+### Recommended full remote flow: local macOS bridge
+
+For reliable remote handoff on macOS, install the lightweight bridge on the target Mac. The bridge runs inside the user's GUI session, opens a **new visible Terminal window**, launches native `claude remote-control`, and writes the result to `~/.clawdremote/last-result.json`.
+
+Install it on the target Mac:
 
 ```bash
-ssh user@target-mac 'zsh -lic "cd /path/to/project && claude --dangerously-skip-permissions --model opus"'
+./install-macos-bridge.sh
+```
+
+Trigger a launch request on the target Mac:
+
+```bash
+./request-remote-launch.sh /path/to/project
+```
+
+Read the last result:
+
+```bash
+cat ~/.clawdremote/last-result.json
 ```
 
 ## Notes
