@@ -10,7 +10,7 @@ Start a live Claude Code terminal session in a target project folder for remote 
 ## Default workflow
 
 1. Confirm the target directory.
-2. Choose whether the user wants a visible foreground Terminal session or a background PTY session.
+2. Default to a visible foreground Terminal session in a new Terminal window unless the user explicitly wants a background PTY session.
 3. Start the launcher script in that folder.
 4. Check whether Claude Code shows a remote-control link.
 5. If remote control is not active yet, enable it by sending `/remote-control` in the Claude session.
@@ -36,8 +36,8 @@ Optional extra Claude arguments:
 - changes into that directory
 - starts `claude --dangerously-skip-permissions --model opus`
 - supports two modes:
-  - `--background` (default): launches Claude in the current PTY for remote handoff
-  - `--foreground`: opens a visible macOS Terminal tab/window and launches Claude there
+  - `--foreground` (default): opens a new visible macOS Terminal window and launches Claude there
+  - `--background`: launches Claude in the current PTY for remote handoff
 - passes through any extra Claude CLI arguments after `--`
 - prints the clean exit path: `/exit`
 
@@ -63,8 +63,8 @@ Use when the user wants the session visible on the Mac in Terminal.
 
 - Use an interactive terminal with PTY support.
 - Do not use `--print`; this skill is for persistent interactive sessions.
-- Prefer `--background` for pure remote handoff. It remains the default.
-- Prefer `--foreground` when the user wants the terminal visible on the Mac.
+- Prefer `--foreground` by default so the user can see the Terminal window on the Mac.
+- Use `--background` only when the user explicitly wants pure remote handoff without a visible Terminal window.
 - Default model is **Opus**. Override it by passing your own model after `--`.
 - After launch, look for the Claude Code remote-control URL in the terminal output and include it in your handoff reply.
 - If remote control is not already active, send `/remote-control` in the Claude session to enable it, then report the link.

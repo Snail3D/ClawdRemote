@@ -9,7 +9,8 @@ ClawdRemote is a tiny launcher + skill that:
 - changes into a target project directory
 - starts Claude Code in interactive mode
 - defaults to **Opus**
-- supports either a **background** PTY launch or a visible **foreground** Terminal launch on macOS
+- defaults to a visible **foreground** Terminal launch in a new macOS Terminal window
+- also supports a **background** PTY launch when explicitly wanted
 - supports clean remote handoff with a Claude remote-control link when available
 - exits cleanly with `/exit`
 
@@ -45,7 +46,7 @@ The script will:
 1. verify the target directory exists
 2. `cd` into that directory
 3. start Claude with dangerous permissions enabled and Opus as the default model
-4. support background or foreground launch modes
+4. support both launch modes, defaulting to a new visible foreground Terminal window
 5. leave the session interactive for remote takeover
 6. print the clean shutdown path: `/exit`
 
@@ -93,6 +94,7 @@ ssh user@target-mac 'zsh -lic "cd /path/to/project && claude --dangerously-skip-
 - Do not use a short timeout for remote handoff sessions.
 - `--dangerously-skip-permissions` is intentionally powerful, so only use it for folders you trust.
 - Foreground mode currently relies on macOS Terminal automation.
+- Foreground mode opens a new Terminal window instead of reusing the current one.
 
 ## Example
 

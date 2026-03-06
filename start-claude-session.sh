@@ -8,8 +8,8 @@ Usage:
   start-claude-session.sh [--mode foreground|background] <target-dir> [-- <extra claude args...>]
 
 Modes:
-  --background   Run Claude in the current PTY (default)
-  --foreground   Open a visible macOS Terminal tab/window and launch Claude there
+  --background   Run Claude in the current PTY
+  --foreground   Open a new visible macOS Terminal window and launch Claude there (default)
 
 Model default:
   Uses Opus by default via: --model opus
@@ -23,7 +23,7 @@ EOF
   exit 2
 }
 
-mode="background"
+mode="foreground"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -107,11 +107,7 @@ terminal_line="cd $quoted_dir && clear && echo '[clawd-remote] cwd: $resolved_di
 set launchCommand to $(printf '%s' "$terminal_line" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))')
 tell application "Terminal"
   activate
-  if (count of windows) = 0 then
-    do script launchCommand
-  else
-    do script launchCommand in front window
-  end if
+  do script launchCommand
 end tell
 APPLESCRIPT
 
